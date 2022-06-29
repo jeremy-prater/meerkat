@@ -1,0 +1,18 @@
+[package]
+name = "meerkat_common"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = "0.7"
+rapier3d = "0.13.0"
+log = "0.4.17"
+fern = { version = "0.6", features = ["colored"] }
+lazy_static = "1.4.0"
+chrono = "0.4.19"
+tokio = { version = "1", features = ["full"] }
+anyhow = "1.0.57"
+nalgebra = "0.31.0"
+multiarray = "0.1.3"

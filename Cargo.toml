@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = [
+    "common",
+    "ecs_lib",
+    "tictactoe_3d",
+]
