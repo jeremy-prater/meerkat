@@ -18,7 +18,7 @@ fn main() -> Result<()> {
         .add_plugins_with(DefaultPlugins, |group| group.disable::<LogPlugin>())
         .add_plugin(EguiPlugin)
         .add_loopless_state(GameState::MainMenu)
-        .init_resource::<crate::resources::player::Player>()
+        .init_resource::<resources::player::Player>()
         // menu setup (state enter) systems
         .add_enter_system(GameState::MainMenu, ui::main_menu::setup_menu)
         // menu cleanup (state exit) systems

@@ -8,14 +8,14 @@ pub enum PlayerSide {
 }
 
 pub struct Player {
-    player_name: String,
-    side: PlayerSide,
+    pub name: String,
+    pub side: PlayerSide,
 }
 
 impl Default for Player {
     fn default() -> Self {
         Player {
-            player_name: "Croagunk".to_string(),
+            name: "Croagunk".to_string(),
             side: PlayerSide::Auto,
         }
     }
