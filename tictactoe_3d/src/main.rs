@@ -1,13 +1,12 @@
 use anyhow::Result;
-use bevy::app::AppExit;
 use bevy::input::system::exit_on_esc_system;
 use bevy::{log::LogPlugin, prelude::*};
+use bevy_egui::EguiPlugin;
 use iyes_loopless::prelude::*;
-use bevy_egui::{egui, EguiContext, EguiPlugin};
 
 pub mod components;
-pub mod states;
 pub mod resources;
+pub mod states;
 pub mod ui;
 
 use states::game_state::GameState;
@@ -29,14 +28,19 @@ fn main() -> Result<()> {
         // game setup (state enter) systems
         // .add_enter_system(GameState::InGame, setup_game_camera)
         // game cleanup (state exit) systems
+        // Main menu
         .add_system_set(
             ConditionSet::new()
                 .run_in_state(GameState::MainMenu)
                 .with_system(exit_on_esc_system)
                 .with_system(ui::main_menu::main_menu_ui_system)
-                // our menu button handlers
-                // .with_system(butt_exit.run_if(on_butt_interact::<ExitButt>))
-                // .with_system(butt_game.run_if(on_butt_interact::<EnterButt>))
+                .into(),
+        )
+        // Connecting
+        .add_system_set(
+            ConditionSet::new()
+                .run_in_state(GameState::Connecting)
+                .with_system(ui::connecting::connecting_ui_system)
                 .into(),
         )
         // our other various systems:

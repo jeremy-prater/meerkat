@@ -13,6 +13,6 @@ pub enum GameState {
 
 pub fn debug_game_state_changes(state: Res<CurrentState<GameState>>) {
     if state.is_changed() {
-        info!("GameState :: Detected state change to {:?}!", state);
+        info!("GameState :: Game state change to {:?}!", state);
     }
 }
