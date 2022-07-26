@@ -47,8 +47,8 @@ pub fn init_logging() -> Result<(), fern::InitError> {
                         .checked_sub(&chrono::Duration::seconds(seconds))
                         .unwrap();
 
-                    let micros = duration.num_nanoseconds().unwrap() as f64 / 1000000.0;
-                    format!("{}:{:02}:{:02}.{:0.09}", hours, minutes, seconds, micros)
+                    let micros = duration.num_nanoseconds().unwrap();
+                    format!("{}:{:02}:{:02}.{:09}", hours, minutes, seconds, micros)
                 },
                 module = record.target(),
                 level = colors.color(record.level()),
