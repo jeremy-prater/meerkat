@@ -1,12 +1,12 @@
 use anyhow::Result;
-use bevy::input::system::exit_on_esc_system;
+use bevy::window::close_on_esc;
 use bevy::{log::LogPlugin, prelude::*};
 use iyes_loopless::prelude::*;
 
 pub mod components;
 pub mod resources;
 pub mod states;
-pub mod ui;
+pub mod systems;
 
 use states::game_state::GameState;
 
@@ -24,32 +24,47 @@ fn main() -> Result<()> {
 
         // Main menu
         // menu setup (state enter) systems
-        .add_enter_system(GameState::MainMenu, ui::main_menu::setup_menu)
-        .add_enter_system(GameState::MainMenu, ui::camera::setup_ui_camera)        
+        .add_enter_system(GameState::MainMenu, systems::main_menu::setup_menu)
         .add_system_set(
             ConditionSet::new()
             .run_in_state(GameState::MainMenu)
-            .with_system(exit_on_esc_system)
-            .with_system(ui::main_menu::main_menu_ui_system)
+            .with_system(close_on_esc)
+            .with_system(systems::main_menu::main_menu_ui_system)
             .into(),
-        )
+        )        
         // menu cleanup (state exit) systems
         .add_exit_system(
             GameState::MainMenu,
             meerkat_common::common::despawn::despawn_with::<components::main_menu::MainMenu>,
         )
 
+        // Falling XO States
+        .add_enter_system(GameState::MainMenu, systems::falling_xo::setup_falling_xo)
+        .add_system_set(
+            ConditionSet::new()
+            .run_in_state(GameState::MainMenu)
+            .run_in_state(GameState::Connecting)
+            .with_system(systems::falling_xo::falling_xo_system)
+            .into(),
+        )        
+        // Falling XO cleanup (state exit) systems
+        // .add_exit_system(
+        //     GameState::MainMenu,
+        //     meerkat_common::common::despawn::despawn_with::<components::main_menu::MainMenu>,
+        // )
+
+
         // Connecting
         .add_system_set(
             ConditionSet::new()
                 .run_in_state(GameState::Connecting)
-                .with_system(ui::connecting::connecting_ui_system)
+                .with_system(systems::connecting::connecting_ui_system)
                 .into(),
         )
 
         // In game
         // game setup (state enter) systems
-        // .add_enter_system(GameState::InGame, ui::camera::setup_ui_camera)
+        // .add_enter_system(GameState::InGame, systems::camera::setup_ui_camera)
         // game cleanup (state exit) systems
 
         // our other various systems:
