@@ -17,6 +17,7 @@ log = "0.4.17"
 tokio = { version = "1", features = ["full"] }
 iyes_loopless = "0.7"
 multiarray = "0.1.3"
+rand = "0.8.5"
 
 # We might need these later
 # fern = { version = "0.6", features = ["colored"] }

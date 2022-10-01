@@ -1,6 +1,7 @@
 use bevy::{app::AppExit, prelude::*};
 use iyes_loopless::prelude::*;
 use log::info;
+use rand::random;
 
 pub fn setup_falling_xo(
     mut commands: Commands,
@@ -9,31 +10,14 @@ pub fn setup_falling_xo(
 ) {
     info!("setup falling xo!");
 
-    commands
+    let camera = commands
         .spawn_bundle(Camera3dBundle {
-            transform: Transform::from_xyz(5.0, 0.0, 0.0)
+            transform: Transform::from_xyz(15.0, 0.0, 0.0)
                 .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
             ..default()
         })
-        .insert(crate::components::main_menu::Camera);
-    // note that we have to include the `Scene0` label
-    let my_gltf = asset_server.load("o.gltf#Scene0");
-
-    // to be able to position our 3d model:
-    // spawn a parent entity with a TransformBundle
-    // and spawn our gltf as a scene under it
-    let o_model = commands
-        .spawn_bundle(TransformBundle {
-            local: Transform::identity(),
-            global: GlobalTransform::identity(),
-        })
-        .with_children(|parent| {
-            parent.spawn_bundle(SceneBundle {
-                scene: my_gltf,
-                ..default()
-            });
-        })
-        .insert(crate::components::main_menu::OModel);
+        .insert(crate::components::main_menu::Camera)
+        .id();
 
     const HALF_SIZE: f32 = 1.0;
     let light = commands
@@ -55,10 +39,59 @@ pub fn setup_falling_xo(
         })
         .insert(crate::components::main_menu::Light)
         .id();
+
+    // commands.entity(camera).push_children(&[o_model, light]);
 }
 
-pub fn falling_xo_system(
-    time: Res<Time>,
-    mut query: Query<&mut Transform, With<DirectionalLight>>,
+fn generate_o() -> crate::components::main_menu::OModel {
+    let o_model = crate::components::main_menu::OModel {
+        rotate_deg_s: Vec3::new(
+            random::<f32>() - 0.5,
+            random::<f32>() - 0.5,
+            random::<f32>() - 0.5,
+        ),
+    };
+
+    info!("Creating O Model {:?}", o_model);
+
+    o_model
+}
+
+pub fn falling_xo_system_manager(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    query: Query<&crate::components::main_menu::OModel>,
 ) {
+    if query.iter().count() == 5 {
+        return;
+    }
+
+    let pos = ((query.iter().count() * 4) as i32 - 10) as f32;
+
+    let x_or_o = query.iter().count() % 2;
+
+    let my_gltf = match x_or_o {
+        0 => asset_server.load("o.gltf#Scene0"),
+        _ => asset_server.load("x.gltf#Scene0"),
+    };
+
+    let o_model = commands
+        .spawn_bundle(SceneBundle {
+            scene: my_gltf,
+            transform: Transform::from_translation(Vec3::new(0., 0., pos)),
+            ..default()
+        })
+        .insert(generate_o())
+        .id();
+}
+
+pub fn falling_xo_system_movement(
+    time: Res<Time>,
+    mut query: Query<(&crate::components::main_menu::OModel, &mut Transform)>,
+) {
+    for (model, mut transform) in &mut query {
+        transform.rotation *= Quat::from_rotation_x(time.delta_seconds() * model.rotate_deg_s.x);
+        transform.rotation *= Quat::from_rotation_z(time.delta_seconds() * model.rotate_deg_s.z);
+        transform.rotation *= Quat::from_rotation_y(time.delta_seconds() * model.rotate_deg_s.y);
+    }
 }

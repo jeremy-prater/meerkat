@@ -5,3 +5,9 @@ members = [
     "ecs_lib",
     "tictactoe_3d",
 ]
+
+# [profile.dev.package."*"]
+# opt-level = 3
+
+# [profile.release]
+# lto = "thin"

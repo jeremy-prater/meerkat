@@ -3,8 +3,10 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct MainMenu;
 
-#[derive(Component)]
-pub struct OModel;
+#[derive(Component, Debug)]
+pub struct OModel {
+    pub rotate_deg_s: Vec3,
+}
 
 #[derive(Component)]
 pub struct Light;
