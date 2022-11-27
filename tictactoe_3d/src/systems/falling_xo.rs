@@ -1,17 +1,17 @@
-use bevy::{app::AppExit, prelude::*};
-use iyes_loopless::prelude::*;
+use bevy::{prelude::*};
+
 use log::info;
 use rand::random;
 
 pub fn setup_falling_xo(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut player: ResMut<crate::resources::player::Player>,
+    _asset_server: Res<AssetServer>,
+    _player: ResMut<crate::resources::player::Player>,
 ) {
     info!("setup falling xo!");
 
-    let camera = commands
-        .spawn_bundle(Camera3dBundle {
+    let _camera = commands
+        .spawn(Camera3dBundle {
             transform: Transform::from_xyz(15.0, 0.0, 0.0)
                 .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
             ..default()
@@ -20,8 +20,8 @@ pub fn setup_falling_xo(
         .id();
 
     const HALF_SIZE: f32 = 1.0;
-    let light = commands
-        .spawn_bundle(DirectionalLightBundle {
+    let _light = commands
+        .spawn(DirectionalLightBundle {
             directional_light: DirectionalLight {
                 shadow_projection: OrthographicProjection {
                     left: -HALF_SIZE,
@@ -75,8 +75,8 @@ pub fn falling_xo_system_manager(
         _ => asset_server.load("x.gltf#Scene0"),
     };
 
-    let o_model = commands
-        .spawn_bundle(SceneBundle {
+    let _o_model = commands
+        .spawn(SceneBundle {
             scene: my_gltf,
             transform: Transform::from_translation(Vec3::new(0., 0., pos)),
             ..default()

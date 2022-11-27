@@ -1,5 +1,7 @@
 // Player info
 
+use bevy::prelude::*;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PlayerSide {
     Auto,
@@ -7,6 +9,7 @@ pub enum PlayerSide {
     O,
 }
 
+#[derive(Resource)]
 pub struct Player {
     pub name: String,
     pub side: PlayerSide,

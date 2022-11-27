@@ -16,7 +16,7 @@ pub fn setup_menu(
     player.name = "Jones".to_string();
 
     let exit_button = commands
-        .spawn_bundle(ButtonBundle {
+        .spawn(ButtonBundle {
             style: Style {
                 size: Size::new(Val::Px(150.0), Val::Px(65.0)),
                 // center button
@@ -27,11 +27,11 @@ pub fn setup_menu(
                 align_items: AlignItems::Center,
                 ..default()
             },
-            color: NORMAL_BUTTON.into(),
+            background_color: NORMAL_BUTTON.into(),
             ..default()
         })
         .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
+            parent.spawn(TextBundle {
                 text: Text::from_section(
                     "Button",
                     TextStyle {
@@ -48,8 +48,8 @@ pub fn setup_menu(
         .id();
 
     let menu = commands
-        .spawn_bundle(NodeBundle {
-            color: UiColor(Color::rgb(0.5, 0.5, 0.5)),
+        .spawn(NodeBundle {
+            background_color: BackgroundColor(Color::rgb(0.5, 0.5, 0.5)),
             style: Style {
                 size: Size::new(Val::Auto, Val::Auto),
                 margin: UiRect::all(Val::Auto),
@@ -69,10 +69,10 @@ pub fn setup_menu(
 
 pub fn main_menu_ui_system(
     mut commands: Commands,
-    mut player: ResMut<crate::resources::player::Player>,
-    mut ev: EventWriter<AppExit>,
+    _player: ResMut<crate::resources::player::Player>,
+    _ev: EventWriter<AppExit>,
     mut interaction_query: Query<
-        (&Interaction, &mut UiColor, &Children),
+        (&Interaction, &mut BackgroundColor, &Children),
         (Changed<Interaction>, With<Button>),
     >,
     mut text_query: Query<&mut Text>,

@@ -1,6 +1,6 @@
 use anyhow::Result;
-use bevy::window::close_on_esc;
-use bevy::{log::LogPlugin, prelude::*};
+
+use bevy::{prelude::*, window::close_on_esc};
 use iyes_loopless::prelude::*;
 
 pub mod components;
@@ -21,39 +21,39 @@ fn main() -> Result<()> {
             color: Color::WHITE,
             brightness: 0.1,
         })
-
         // Main menu
         // menu setup (state enter) systems
-        // .add_enter_system(GameState::MainMenu, systems::main_menu::setup_menu)
-        // .add_system_set(
-        //     ConditionSet::new()
-        //     .run_in_state(GameState::MainMenu)
-        //     .with_system(close_on_esc)
-        //     .with_system(systems::main_menu::main_menu_ui_system)
-        //     .into(),
-        // )        
-        // // menu cleanup (state exit) systems
-        // .add_exit_system(
-        //     GameState::MainMenu,
-        //     meerkat_common::common::despawn::despawn_with::<components::main_menu::MainMenu>,
-        // )
-
+        .add_enter_system(GameState::MainMenu, systems::main_menu::setup_menu)
+        .add_system_set(
+            ConditionSet::new()
+                .run_in_state(GameState::MainMenu)
+                .with_system(close_on_esc)
+                .with_system(systems::main_menu::main_menu_ui_system)
+                .into(),
+        )
+        // menu cleanup (state exit) systems
+        .add_exit_system(
+            GameState::MainMenu,
+            meerkat_common::common::despawn::despawn_with::<components::main_menu::MainMenu>,
+        )
         // Falling XO States
         .add_enter_system(GameState::MainMenu, systems::falling_xo::setup_falling_xo)
         .add_system_set(
             ConditionSet::new()
-            .run_in_state(GameState::MainMenu)
-            .with_system(systems::falling_xo::falling_xo_system_manager)
-            .with_system(systems::falling_xo::falling_xo_system_movement)
-            .into(),
-        )        
+                .run_in_state(GameState::MainMenu)
+                .with_system(systems::falling_xo::falling_xo_system_manager)
+                .with_system(systems::falling_xo::falling_xo_system_movement)
+                .into(),
+        )
+        .add_exit_system(
+            GameState::MainMenu,
+            meerkat_common::common::despawn::despawn_with::<components::main_menu::OModel>,
+        )
         // Falling XO cleanup (state exit) systems
         // .add_exit_system(
         //     GameState::MainMenu,
         //     meerkat_common::common::despawn::despawn_with::<components::main_menu::MainMenu>,
         // )
-
-
         // Connecting
         .add_system_set(
             ConditionSet::new()
@@ -61,12 +61,10 @@ fn main() -> Result<()> {
                 .with_system(systems::connecting::connecting_ui_system)
                 .into(),
         )
-
         // In game
         // game setup (state enter) systems
         // .add_enter_system(GameState::InGame, systems::camera::setup_3d_camera)
         // game cleanup (state exit) systems
-
         // our other various systems:
         .add_system(states::game_state::debug_game_state_changes)
         .run();
