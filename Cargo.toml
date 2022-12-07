@@ -3,7 +3,9 @@ resolver = "2"
 members = [
     "common",
     "ecs_lib",
-    "tictactoe_3d",
+    "tictactoe_3d/api",
+    "tictactoe_3d/client",
+    "tictactoe_3d/server",
 ]
 
 # [profile.dev.package."*"]

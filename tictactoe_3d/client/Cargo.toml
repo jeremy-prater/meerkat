@@ -7,8 +7,9 @@ edition = "2021"
 
 [dependencies]
 # Local libraries
-meerkat_common = { path = "../common"}
-meerkat_ecs_lib = { path = "../ecs_lib"}
+meerkat_common = { path = "../../common" }
+meerkat_ecs_lib = { path = "../../ecs_lib" }
+tictactoe_3d_api_lib = { path = "../api" }
 
 # Deps
 anyhow = "1.0.66"
