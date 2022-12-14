@@ -3,10 +3,12 @@ use anyhow::Result;
 use bevy::{prelude::*, window::close_on_esc};
 use iyes_loopless::prelude::*;
 
+pub mod cloud;
 pub mod components;
 pub mod resources;
 pub mod states;
 pub mod systems;
+pub mod plugins;
 
 use states::game_state::GameState;
 
@@ -15,6 +17,7 @@ fn main() -> Result<()> {
     App::new()
         // .add_plugins_with(DefaultPlugins, |group| group.disable::<LogPlugin>())
         .add_plugins(DefaultPlugins)
+        .add_plugin(plugins::tokio::TokioRuntime)
         .add_loopless_state(GameState::MainMenu)
         .init_resource::<resources::player::Player>()
         .insert_resource(AmbientLight {

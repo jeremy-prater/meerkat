@@ -3634,6 +3634,7 @@ dependencies = [
  "anyhow",
  "bevy",
  "iyes_loopless",
+ "jsonrpsee",
  "log",
  "meerkat_common",
  "meerkat_ecs_lib",

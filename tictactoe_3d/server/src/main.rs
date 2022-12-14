@@ -1,28 +1,41 @@
 use jsonrpsee::core::{async_trait, Error};
-use jsonrpsee::server::{ServerBuilder};
+use jsonrpsee::server::ServerBuilder;
 use log::info;
 use std::collections::HashSet;
 use std::default::Default;
 use std::sync::{Arc, RwLock};
 
-
 use tictactoe_3d_api_lib::{get_server_url, RpcServer};
 
-#[derive(Default)]
 pub struct RpcServerImpl {
     player_names: Arc<RwLock<HashSet<String>>>,
 }
 
+impl Default for RpcServerImpl {
+    fn default() -> Self {
+        info!("Creating RpcServer");
+        let mut default_names: HashSet<String> = HashSet::new();
+        default_names.insert("Jones".to_string());
+        RpcServerImpl {
+            player_names: Arc::new(RwLock::new(default_names)),
+        }
+    }
+}
+
 #[async_trait]
 impl RpcServer for RpcServerImpl {
-    async fn get_name_available(&self, name: String) -> Result<bool, Error> {
+    async fn get_name_available(&self, name: &str) -> Result<bool, Error> {
         let lock = self.player_names.read().unwrap();
-        Ok(!lock.contains(&name))
+        let result = !lock.contains(name);
+        info!("get_name_available : {} {}", name, result);
+        Ok(result)
     }
 
-    async fn claim_name(&self, name: String) -> Result<bool, Error> {
+    async fn claim_name(&self, name: &str) -> Result<bool, Error> {
         let mut lock = self.player_names.write().unwrap();
-        Ok(lock.insert(name))
+        let result = lock.insert(name.to_string());
+        info!("claim_name : {} {}", name, result);
+        Ok(result)
     }
 
     // Note that the server's subscription method must return `SubscriptionResult`.
@@ -41,11 +54,23 @@ mod rpcserver_tests {
     use super::*;
 
     #[tokio::test]
-    async fn test_get_name() {
+    async fn test_get_name_used() {
         let server = RpcServerImpl::default();
         assert_eq!(
             server
                 .get_name_available("Jones".to_string())
+                .await
+                .unwrap(),
+            false
+        );
+    }
+
+    #[tokio::test]
+    async fn test_get_name() {
+        let server = RpcServerImpl::default();
+        assert_eq!(
+            server
+                .get_name_available("NotJones".to_string())
                 .await
                 .unwrap(),
             true
@@ -57,20 +82,26 @@ mod rpcserver_tests {
         let server = RpcServerImpl::default();
         assert_eq!(
             server
-                .get_name_available("Jones".to_string())
+                .get_name_available("NotJones".to_string())
                 .await
                 .unwrap(),
             true
         );
-        assert_eq!(server.claim_name("Jones".to_string()).await.unwrap(), true);
+        assert_eq!(
+            server.claim_name("NotJones".to_string()).await.unwrap(),
+            true
+        );
         assert_eq!(
             server
-                .get_name_available("Jones".to_string())
+                .get_name_available("NotJones".to_string())
                 .await
                 .unwrap(),
             false
         );
-        assert_eq!(server.claim_name("Jones".to_string()).await.unwrap(), false);
+        assert_eq!(
+            server.claim_name("NotJones".to_string()).await.unwrap(),
+            false
+        );
     }
 }
 
