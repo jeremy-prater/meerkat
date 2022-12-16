@@ -1,6 +1,9 @@
-use bevy::{app::AppExit, prelude::*};
+use bevy::{app::AppExit, prelude::*, ui::update};
 use iyes_loopless::prelude::*;
 use log::info;
+
+const COLOR_NAME_OK: Color = Color::rgb(0.0, 0.6, 0.2);
+const COLOR_NAME_BAD: Color = Color::rgb(0.6, 0.2, 0.0);
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
@@ -22,9 +25,7 @@ pub fn name_input(
 
     for key in keys.get_just_pressed() {
         match key {
-            KeyCode::Return => {
-                info!("Name: {}", player.name);
-            }
+            KeyCode::Return => {}
             KeyCode::Backslash | KeyCode::Delete | KeyCode::Back => {
                 player.name.pop();
                 modified = true;
@@ -35,7 +36,7 @@ pub fn name_input(
 
     if modified {
         cloud.get_name_available(player.name.clone());
-        info!("Name : {}", player.name);
+        info!("Player name : {}", player.name);
     }
 }
 
@@ -101,31 +102,43 @@ pub fn setup_menu(
 #[allow(clippy::type_complexity)]
 pub fn main_menu_ui_system(
     mut commands: Commands,
-    _player: ResMut<crate::resources::player::Player>,
-    _ev: EventWriter<AppExit>,
-    mut interaction_query: Query<
-        (&Interaction, &mut BackgroundColor, &Children),
-        (Changed<Interaction>, With<Button>),
-    >,
+    player: ResMut<crate::resources::player::Player>,
+    cloud: Res<crate::resources::cloud::CloudClient>,
+    // _ev: EventWriter<AppExit>,
+    // mut interaction_query: Query<
+    //     (&Interaction, &mut BackgroundColor, &Children),
+    //     (Changed<Interaction>, With<Button>),
+    // >,
+    mut update_name_query: Query<(&mut BackgroundColor, &Children), (With<Button>)>,
     mut text_query: Query<&mut Text>,
     _cloud: Res<crate::resources::cloud::CloudClient>,
 ) {
-    for (interaction, mut color, children) in interaction_query.iter_mut() {
+    // for (interaction, mut color, children) in interaction_query.iter_mut() {
+    //     let mut text = text_query.get_mut(children[0]).unwrap();
+    //     match *interaction {
+    //         Interaction::Clicked => {
+    //             text.sections[0].value = "Press".to_string();
+    //             *color = PRESSED_BUTTON.into();
+    //             commands.insert_resource(NextState(crate::GameState::Connecting));
+    //         }
+    //         Interaction::Hovered => {
+    //             text.sections[0].value = "Hover".to_string();
+    //             *color = HOVERED_BUTTON.into();
+    //         }
+    //         Interaction::None => {
+    //             text.sections[0].value = "Button".to_string();
+    //             *color = NORMAL_BUTTON.into();
+    //         }
+    //     }
+    // }
+
+    for (mut color, children) in update_name_query.iter_mut() {
         let mut text = text_query.get_mut(children[0]).unwrap();
-        match *interaction {
-            Interaction::Clicked => {
-                text.sections[0].value = "Press".to_string();
-                *color = PRESSED_BUTTON.into();
-                commands.insert_resource(NextState(crate::GameState::Connecting));
-            }
-            Interaction::Hovered => {
-                text.sections[0].value = "Hover".to_string();
-                *color = HOVERED_BUTTON.into();
-            }
-            Interaction::None => {
-                text.sections[0].value = "Button".to_string();
-                *color = NORMAL_BUTTON.into();
-            }
-        }
+        text.sections[0].value = player.name.clone();
+        let data = cloud.data.read().unwrap();
+        *color = match data.get_name_available {
+            true => COLOR_NAME_OK.into(),
+            false => COLOR_NAME_BAD.into(),
+        };
     }
 }

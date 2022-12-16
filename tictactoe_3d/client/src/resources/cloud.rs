@@ -2,17 +2,22 @@ use anyhow::Result;
 use bevy::prelude::*;
 use jsonrpsee::ws_client::{WsClient, WsClientBuilder};
 use log::info;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use tictactoe_3d_api_lib::{get_local_server_url, RpcClient};
 use tokio::{self, runtime::Runtime};
 
+use crate::cloud::Client;
+
+#[derive(Default)]
+pub struct ClientData {
+    pub get_name_available: bool,
+}
 #[derive(Resource, Clone)]
 pub struct CloudClient {
     _runtime: Arc<Runtime>,
     connection: Arc<WsClient>,
     handle: tokio::runtime::Handle,
-
-    pub get_name_available: bool,
+    pub data: Arc<RwLock<ClientData>>,
 }
 
 impl CloudClient {
@@ -24,17 +29,22 @@ impl CloudClient {
     }
 
     pub fn get_name_available(&self, name: String) {
-        let mut clone = self.clone();
         if name.is_empty() {
-            clone.get_name_available = false;
-            info!("Setting get_name_available : {}", clone.get_name_available);
+            let mut data = self.data.write().unwrap();
+            data.get_name_available = false;
+            info!("Setting get_name_available : {}", data.get_name_available);
             return;
         }
 
+        let mut clone = self.clone();
+        let connection = self.connection.clone();
+
         self.handle.spawn(async move {
-            let name = name.clone();
-            clone.get_name_available = clone.connection.get_name_available(&name).await.unwrap();
-            info!("Setting get_name_available : {}", clone.get_name_available);
+            let new_value = connection.get_name_available(&name).await.unwrap();
+
+            let mut data = clone.data.write().unwrap();
+            data.get_name_available = new_value;
+            info!("Setting get_name_available : {}", data.get_name_available);
         });
     }
 }
@@ -53,7 +63,7 @@ impl Default for CloudClient {
             _runtime: Arc::new(runtime),
             connection: Arc::new(connection),
             handle,
-            get_name_available: false,
+            data: Arc::new(RwLock::new(ClientData::default())),
         }
     }
 }
