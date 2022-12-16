@@ -1,5 +1,5 @@
 use anyhow::Result;
-use bevy::{prelude::*};
+use bevy::prelude::*;
 use jsonrpsee::ws_client::{WsClient, WsClientBuilder};
 use log::info;
 use std::sync::Arc;
@@ -25,7 +25,12 @@ impl CloudClient {
 
     pub fn get_name_available(&self, name: String) {
         let mut clone = self.clone();
-        let name = name;
+        if name.is_empty() {
+            clone.get_name_available = false;
+            info!("Setting get_name_available : {}", clone.get_name_available);
+            return;
+        }
+
         self.handle.spawn(async move {
             let name = name.clone();
             clone.get_name_available = clone.connection.get_name_available(&name).await.unwrap();
