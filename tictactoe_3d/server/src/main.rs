@@ -56,52 +56,22 @@ mod rpcserver_tests {
     #[tokio::test]
     async fn test_get_name_used() {
         let server = RpcServerImpl::default();
-        assert_eq!(
-            server
-                .get_name_available("Jones".to_string())
-                .await
-                .unwrap(),
-            false
-        );
+        assert!(!server.get_name_available("Jones").await.unwrap());
     }
 
     #[tokio::test]
     async fn test_get_name() {
         let server = RpcServerImpl::default();
-        assert_eq!(
-            server
-                .get_name_available("NotJones".to_string())
-                .await
-                .unwrap(),
-            true
-        );
+        assert!(server.get_name_available("NotJones").await.unwrap());
     }
     #[tokio::test]
 
     async fn test_set_name() {
         let server = RpcServerImpl::default();
-        assert_eq!(
-            server
-                .get_name_available("NotJones".to_string())
-                .await
-                .unwrap(),
-            true
-        );
-        assert_eq!(
-            server.claim_name("NotJones".to_string()).await.unwrap(),
-            true
-        );
-        assert_eq!(
-            server
-                .get_name_available("NotJones".to_string())
-                .await
-                .unwrap(),
-            false
-        );
-        assert_eq!(
-            server.claim_name("NotJones".to_string()).await.unwrap(),
-            false
-        );
+        assert!(server.get_name_available("NotJones").await.unwrap());
+        assert!(server.claim_name("NotJones").await.unwrap());
+        assert!(!server.get_name_available("NotJones").await.unwrap());
+        assert!(!server.claim_name("NotJones").await.unwrap());
     }
 }
 

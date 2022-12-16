@@ -15,10 +15,16 @@ pub struct Player {
     pub side: PlayerSide,
 }
 
+impl Player {
+    pub fn check_name(&self) -> bool {
+        true
+    }
+}
+
 impl Default for Player {
     fn default() -> Self {
         Player {
-            name: "Croagunk".to_string(),
+            name: "Jones".to_string(),
             side: PlayerSide::Auto,
         }
     }

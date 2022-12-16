@@ -5,6 +5,12 @@ pub struct TokioRuntime;
 
 use crate::cloud;
 
+impl TokioRuntime {
+    pub fn test_fn() -> bool {
+        true
+    }
+}
+
 impl Plugin for TokioRuntime {
     fn build(&self, app: &mut App) {
         tokio::runtime::Builder::new_multi_thread()
@@ -17,7 +23,7 @@ impl Plugin for TokioRuntime {
     }
 }
 
-async fn tokio_main(app: &mut App) {
+async fn tokio_main(_app: &mut App) {
     info!("Hello from tokio runtime!");
 
     let client = cloud::Client::connect().await.unwrap();

@@ -6,14 +6,45 @@ const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
 
+pub fn name_input(
+    mut char_evr: EventReader<ReceivedCharacter>,
+    keys: Res<Input<KeyCode>>,
+    mut player: ResMut<crate::resources::player::Player>,
+    cloud: ResMut<crate::resources::cloud::CloudClient>,
+) {
+    let mut modified = false;
+    for ev in char_evr.iter() {
+        if ev.char.is_alphanumeric() {
+            player.name.push(ev.char);
+            modified = true;
+        }
+    }
+
+    for key in keys.get_just_pressed() {
+        match key {
+            KeyCode::Return => {
+                info!("Name: {}", player.name);
+            }
+            KeyCode::Backslash | KeyCode::Delete | KeyCode::Back => {
+                player.name.pop();
+                modified = true;
+            }
+            _ => {}
+        }
+    }
+
+    if modified {
+        cloud.get_name_available(player.name.clone());
+        info!("Name : {}", player.name);
+    }
+}
+
 pub fn setup_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut player: ResMut<crate::resources::player::Player>,
+    _player: ResMut<crate::resources::player::Player>,
 ) {
     info!("setup menu!");
-
-    player.name = "Jones".to_string();
 
     let exit_button = commands
         .spawn(ButtonBundle {
@@ -67,6 +98,7 @@ pub fn setup_menu(
     commands.entity(menu).push_children(&[exit_button]);
 }
 
+#[allow(clippy::type_complexity)]
 pub fn main_menu_ui_system(
     mut commands: Commands,
     _player: ResMut<crate::resources::player::Player>,
@@ -76,6 +108,7 @@ pub fn main_menu_ui_system(
         (Changed<Interaction>, With<Button>),
     >,
     mut text_query: Query<&mut Text>,
+    _cloud: Res<crate::resources::cloud::CloudClient>,
 ) {
     for (interaction, mut color, children) in interaction_query.iter_mut() {
         let mut text = text_query.get_mut(children[0]).unwrap();

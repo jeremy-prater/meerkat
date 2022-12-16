@@ -1,5 +1,4 @@
 use anyhow::Result;
-
 use bevy::{prelude::*, window::close_on_esc};
 use iyes_loopless::prelude::*;
 
@@ -17,13 +16,13 @@ fn main() -> Result<()> {
     App::new()
         // .add_plugins_with(DefaultPlugins, |group| group.disable::<LogPlugin>())
         .add_plugins(DefaultPlugins)
-        .add_plugin(plugins::tokio::TokioRuntime)
         .add_loopless_state(GameState::MainMenu)
         .init_resource::<resources::player::Player>()
         .insert_resource(AmbientLight {
             color: Color::WHITE,
             brightness: 0.1,
         })
+        .insert_resource(resources::cloud::CloudClient::default())
         // Main menu
         // menu setup (state enter) systems
         .add_enter_system(GameState::MainMenu, systems::main_menu::setup_menu)
@@ -32,6 +31,7 @@ fn main() -> Result<()> {
                 .run_in_state(GameState::MainMenu)
                 .with_system(close_on_esc)
                 .with_system(systems::main_menu::main_menu_ui_system)
+                .with_system(systems::main_menu::name_input)
                 .into(),
         )
         // menu cleanup (state exit) systems
