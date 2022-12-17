@@ -111,7 +111,6 @@ pub fn main_menu_ui_system(
     // >,
     mut update_name_query: Query<(&mut BackgroundColor, &Children), With<Button>>,
     mut text_query: Query<&mut Text>,
-    _cloud: Res<crate::resources::cloud::CloudClient>,
 ) {
     // for (interaction, mut color, children) in interaction_query.iter_mut() {
     //     let mut text = text_query.get_mut(children[0]).unwrap();
