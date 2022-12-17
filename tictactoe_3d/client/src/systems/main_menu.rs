@@ -109,7 +109,7 @@ pub fn main_menu_ui_system(
     //     (&Interaction, &mut BackgroundColor, &Children),
     //     (Changed<Interaction>, With<Button>),
     // >,
-    mut update_name_query: Query<(&mut BackgroundColor, &Children), (With<Button>)>,
+    mut update_name_query: Query<(&mut BackgroundColor, &Children), With<Button>>,
     mut text_query: Query<&mut Text>,
     _cloud: Res<crate::resources::cloud::CloudClient>,
 ) {
@@ -135,8 +135,8 @@ pub fn main_menu_ui_system(
     for (mut color, children) in update_name_query.iter_mut() {
         let mut text = text_query.get_mut(children[0]).unwrap();
         text.sections[0].value = player.name.clone();
-        let data = cloud.data.read().unwrap();
-        *color = match data.get_name_available {
+        let data = cloud.data.get_name_available.read().unwrap();
+        *color = match *data {
             true => COLOR_NAME_OK.into(),
             false => COLOR_NAME_BAD.into(),
         };

@@ -6,18 +6,16 @@ use std::sync::{Arc, RwLock};
 use tictactoe_3d_api_lib::{get_local_server_url, RpcClient};
 use tokio::{self, runtime::Runtime};
 
-use crate::cloud::Client;
-
 #[derive(Default)]
 pub struct ClientData {
-    pub get_name_available: bool,
+    pub get_name_available: RwLock<bool>,
 }
 #[derive(Resource, Clone)]
 pub struct CloudClient {
     _runtime: Arc<Runtime>,
     connection: Arc<WsClient>,
     handle: tokio::runtime::Handle,
-    pub data: Arc<RwLock<ClientData>>,
+    pub data: Arc<ClientData>,
 }
 
 impl CloudClient {
@@ -30,9 +28,9 @@ impl CloudClient {
 
     pub fn get_name_available(&self, name: String) {
         if name.is_empty() {
-            let mut data = self.data.write().unwrap();
-            data.get_name_available = false;
-            info!("Setting get_name_available : {}", data.get_name_available);
+            let mut lock = self.data.get_name_available.write().unwrap();
+            *lock = false;
+            info!("Setting get_name_available : {}", *lock);
             return;
         }
 
@@ -42,9 +40,9 @@ impl CloudClient {
         self.handle.spawn(async move {
             let new_value = connection.get_name_available(&name).await.unwrap();
 
-            let mut data = clone.data.write().unwrap();
-            data.get_name_available = new_value;
-            info!("Setting get_name_available : {}", data.get_name_available);
+            let mut lock = clone.data.get_name_available.write().unwrap();
+            *lock = new_value;
+            info!("Setting get_name_available : {}", *lock);
         });
     }
 }
@@ -63,7 +61,7 @@ impl Default for CloudClient {
             _runtime: Arc::new(runtime),
             connection: Arc::new(connection),
             handle,
-            data: Arc::new(RwLock::new(ClientData::default())),
+            data: Arc::new(ClientData::default()),
         }
     }
 }
