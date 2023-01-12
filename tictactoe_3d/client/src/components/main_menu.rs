@@ -6,6 +6,7 @@ pub struct MainMenu;
 #[derive(Component, Debug)]
 pub struct OModel {
     pub rotate_deg_s: Vec3,
+    pub fall_s: f32,
 }
 
 #[derive(Component)]

@@ -1,5 +1,5 @@
-use bevy::{app::AppExit, prelude::*, ui::update};
-use iyes_loopless::prelude::*;
+use bevy::{prelude::*};
+
 use log::info;
 
 const COLOR_NAME_OK: Color = Color::rgb(0.0, 0.6, 0.2);
@@ -17,7 +17,7 @@ pub fn name_input(
 ) {
     let mut modified = false;
     for ev in char_evr.iter() {
-        if ev.char.is_alphanumeric() {
+        if ev.char.is_alphanumeric() && (player.name.len() < 8) {
             player.name.push(ev.char);
             modified = true;
         }
@@ -50,7 +50,7 @@ pub fn setup_menu(
     let exit_button = commands
         .spawn(ButtonBundle {
             style: Style {
-                size: Size::new(Val::Px(150.0), Val::Px(65.0)),
+                size: Size::new(Val::Px(250.0), Val::Px(65.0)),
                 // center button
                 margin: UiRect::all(Val::Auto),
                 // horizontally center child text
@@ -65,14 +65,13 @@ pub fn setup_menu(
         .with_children(|parent| {
             parent.spawn(TextBundle {
                 text: Text::from_section(
-                    "Button",
+                    "Name",
                     TextStyle {
                         font: asset_server.load("ARCADE.TTF"),
                         font_size: 40.0,
                         color: Color::rgb(0.9, 0.9, 0.9),
                     },
                 ),
-                transform: Transform::from_xyz(20.0, 20.0, 0.0),
                 ..default()
             });
         })
@@ -101,7 +100,7 @@ pub fn setup_menu(
 
 #[allow(clippy::type_complexity)]
 pub fn main_menu_ui_system(
-    mut commands: Commands,
+    _commands: Commands,
     player: ResMut<crate::resources::player::Player>,
     cloud: Res<crate::resources::cloud::CloudClient>,
     // _ev: EventWriter<AppExit>,

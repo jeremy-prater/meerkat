@@ -34,7 +34,7 @@ impl CloudClient {
             return;
         }
 
-        let mut clone = self.clone();
+        let clone = self.clone();
         let connection = self.connection.clone();
 
         self.handle.spawn(async move {
