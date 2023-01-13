@@ -52,7 +52,7 @@ fn generate_o() -> crate::components::main_menu::OModel {
             random::<f32>() - 0.5,
             random::<f32>() - 0.5,
         ),
-        fall_s: random::<f32>() * 0.05,
+        fall_s: (random::<f32>() * 0.025) + 0.025,
     };
 
     info!("Creating O Model {:?}", o_model);

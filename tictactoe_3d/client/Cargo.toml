@@ -12,7 +12,7 @@ meerkat_ecs_lib = { path = "../../ecs_lib" }
 
 # Deps
 anyhow = "1.0.66"
-bevy = "0.9"
+bevy = "0.9.1"
 log = "0.4.17"
 tokio = { version = "1", features = ["full"] }
 iyes_loopless = "0.9.1"
