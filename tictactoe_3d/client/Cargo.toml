@@ -16,6 +16,7 @@ bevy = "0.9.1"
 log = "0.4.17"
 tokio = { version = "1", features = ["full"] }
 iyes_loopless = "0.9.1"
+iyes_progress = { version = "0.7.1", features = ["iyes_loopless", "assets"] }
 multiarray = "0.1.3"
 rand = "0.8.5"
 lazy_static = "1.4.0"

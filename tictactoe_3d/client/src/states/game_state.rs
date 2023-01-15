@@ -5,6 +5,7 @@ use iyes_loopless::prelude::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GameState {
+    Splash,
     MainMenu,
     Connecting,
     InGame,

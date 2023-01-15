@@ -2126,6 +2126,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "iyes_progress"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "266c468795c5af070ab4c5fa01aca792a8f01f511e76feb9bea3878a1dbee144"
+dependencies = [
+ "bevy_app",
+ "bevy_asset",
+ "bevy_ecs",
+ "bevy_utils",
+ "iyes_loopless",
+]
+
+[[package]]
 name = "jni"
 version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3630,6 +3643,7 @@ dependencies = [
  "async_once",
  "bevy",
  "iyes_loopless",
+ "iyes_progress",
  "jsonrpsee",
  "lazy_static",
  "log",
