@@ -16,13 +16,12 @@ impl Plugin for MainMenuPlugin {
                     main_menu::name_input,
                 )
                     .chain()
-                    .in_set(GameState::MainMenu),
+                    .in_set(OnUpdate(GameState::MainMenu)),
             )
             .add_system(
                 meerkat_common::common::despawn::despawn_with::<components::main_menu::MainMenu>
                     .in_schedule(OnExit(GameState::MainMenu)),
             )
-
             // Falling XO Systems
             .add_system(falling_xo::setup_falling_xo.in_schedule(OnEnter(GameState::MainMenu)))
             .add_systems(
@@ -31,7 +30,7 @@ impl Plugin for MainMenuPlugin {
                     falling_xo::falling_xo_system_movement,
                 )
                     .chain()
-                    .in_set(GameState::MainMenu),
+                    .in_set(OnUpdate(GameState::MainMenu)),
             )
             .add_system(
                 meerkat_common::common::despawn::despawn_with::<components::main_menu::OModel>

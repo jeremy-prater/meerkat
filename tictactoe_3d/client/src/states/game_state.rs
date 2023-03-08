@@ -1,7 +1,7 @@
 // Our Game State
 use bevy::prelude::*;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States, SystemSet)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
 pub enum GameState {
     #[default]
     Splash,
