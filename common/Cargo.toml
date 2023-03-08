@@ -6,12 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.9.1"
+bevy = "0.10"
 log = "0.4.17"
 fern = { version = "0.6.1", features = ["colored"] }
 lazy_static = "1.4.0"
 chrono = "0.4.23"
-iyes_loopless = "0.9.1"
 
 # We might need these later?
 # rapier3d = "0.13.0"

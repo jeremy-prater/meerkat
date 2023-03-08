@@ -19,19 +19,9 @@ pub fn setup_falling_xo(
         .insert(crate::components::main_menu::Camera)
         .id();
 
-    const HALF_SIZE: f32 = 1.0;
-    let light = commands
+    let _light = commands
         .spawn(DirectionalLightBundle {
             directional_light: DirectionalLight {
-                shadow_projection: OrthographicProjection {
-                    left: -HALF_SIZE,
-                    right: HALF_SIZE,
-                    bottom: -HALF_SIZE,
-                    top: HALF_SIZE,
-                    near: -10.0 * HALF_SIZE,
-                    far: 10.0 * HALF_SIZE,
-                    ..default()
-                },
                 shadows_enabled: true,
                 ..default()
             },
@@ -96,7 +86,7 @@ pub fn falling_xo_system_movement(
             &crate::components::main_menu::OModel,
             &mut Transform,
         ),
-        (With<OModel>),
+        With<OModel>,
     >,
 ) {
     for (entity, model, mut transform) in &mut query {

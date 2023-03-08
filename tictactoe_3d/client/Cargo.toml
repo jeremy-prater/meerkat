@@ -12,11 +12,10 @@ meerkat_ecs_lib = { path = "../../ecs_lib" }
 
 # Deps
 anyhow = "1.0.66"
-bevy = "0.9.1"
+bevy = "0.10"
+iyes_progress = { version = "0.8", features = [ "assets" ], git = "https://github.com/NiklasEi/iyes_progress", branch = "bevy_main"  }
 log = "0.4.17"
 tokio = { version = "1", features = ["full"] }
-iyes_loopless = "0.9.1"
-iyes_progress = { version = "0.7.1", features = ["iyes_loopless", "assets"] }
 multiarray = "0.1.3"
 rand = "0.8.5"
 lazy_static = "1.4.0"

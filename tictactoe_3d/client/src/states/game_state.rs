@@ -1,10 +1,9 @@
 // Our Game State
-
 use bevy::prelude::*;
-use iyes_loopless::prelude::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States, SystemSet)]
 pub enum GameState {
+    #[default]
     Splash,
     MainMenu,
     Connecting,
@@ -12,7 +11,7 @@ pub enum GameState {
     GameResults,
 }
 
-pub fn debug_game_state_changes(state: Res<CurrentState<GameState>>) {
+pub fn debug_game_state_changes(state: Res<State<GameState>>) {
     if state.is_changed() {
         info!("GameState :: Game state change to {:?}!", state);
     }
