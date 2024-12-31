@@ -9,17 +9,16 @@ impl Plugin for SplashPlugin {
     fn build(&self, app: &mut App) {
         app
             // Add plugin for the splash screen
-            .add_plugin(
-                ProgressPlugin::new(GameState::Splash)
-                    .continue_to(GameState::MainMenu)
-                    .track_assets(),
+            .add_plugins(
+                ProgressPlugin::<GameState>::new()
+                    .with_asset_tracking()
+                    .with_state_transition(GameState::Splash, GameState::MainMenu),
             )
             // Load our UI assets during our splash screen
             .add_systems(
-                (splash::setup_splash_ui, splash::load_game_assets)
-                    .chain()
-                    .in_schedule(OnEnter(GameState::Splash)),
+                OnEnter(GameState::Splash),
+                (splash::setup_splash_ui, splash::load_game_assets),
             )
-            .add_system(splash::teardown_splash_ui.in_schedule(OnExit(GameState::Splash)));
+            .add_systems(OnExit(GameState::Splash), splash::teardown_splash_ui);
     }
 }

@@ -5,32 +5,22 @@ use rand::random;
 
 use crate::components::main_menu::OModel;
 
-pub fn setup_falling_xo(
-    mut commands: Commands,
-) {
+pub fn setup_falling_xo(mut commands: Commands) {
     info!("setup falling xo!");
 
-    let camera = commands
-        .spawn(Camera3dBundle {
-            transform: Transform::from_xyz(15.0, 0.0, 0.0)
-                .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
+    commands
+        .spawn((
+            Camera3d::default(),
+            Transform::from_xyz(15.0, 0.0, 0.0).looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
+        ))
+        .insert(crate::components::main_menu::Camera);
+
+    commands
+        .spawn(DirectionalLight {
+            shadows_enabled: true,
             ..default()
         })
-        .insert(crate::components::main_menu::Camera)
-        .id();
-
-    let _light = commands
-        .spawn(DirectionalLightBundle {
-            directional_light: DirectionalLight {
-                shadows_enabled: true,
-                ..default()
-            },
-            ..default()
-        })
-        .insert(crate::components::main_menu::Light)
-        .id();
-
-    // commands.entity(camera).push_children(&[o_model, light]);
+        .insert(crate::components::main_menu::Light);
 }
 
 fn generate_o() -> crate::components::main_menu::OModel {
@@ -62,19 +52,20 @@ pub fn falling_xo_system_manager(
 
     let x_or_o = random::<bool>();
 
-    let my_gltf = match x_or_o {
-        true => asset_server.load("o.gltf#Scene0"),
-        false => asset_server.load("x.gltf#Scene0"),
-    };
+    // let my_gltf = match x_or_o {
+    //     true => asset_server.load("o.gltf#Scene0"),
+    //     false => asset_server.load("x.gltf#Scene0"),
+    // };
 
-    let _o_model = commands
-        .spawn(SceneBundle {
-            scene: my_gltf,
-            transform: Transform::from_translation(Vec3::new(pos_x, 8.0, pos_z)),
-            ..default()
-        })
-        .insert(generate_o())
-        .id();
+    // let _o_model = commands
+    //     .spawn((
+    //         Scene
+    //         scene: my_gltf,
+    //         transform: Transform::from_translation(Vec3::new(pos_x, 8.0, pos_z)),
+    //         ..default()
+    //     })
+    //     .insert(generate_o())
+    //     .id();
 }
 
 pub fn falling_xo_system_movement(
@@ -90,10 +81,10 @@ pub fn falling_xo_system_movement(
     >,
 ) {
     for (entity, model, mut transform) in &mut query {
-        transform.rotation *= Quat::from_rotation_x(time.delta_seconds() * model.rotate_deg_s.x);
-        transform.rotation *= Quat::from_rotation_z(time.delta_seconds() * model.rotate_deg_s.z);
-        transform.rotation *= Quat::from_rotation_y(time.delta_seconds() * model.rotate_deg_s.y);
-        transform.translation.y -= model.fall_s * time.delta_seconds();
+        transform.rotation *= Quat::from_rotation_x(time.delta_secs() * model.rotate_deg_s.x);
+        transform.rotation *= Quat::from_rotation_z(time.delta_secs() * model.rotate_deg_s.z);
+        transform.rotation *= Quat::from_rotation_y(time.delta_secs() * model.rotate_deg_s.y);
+        transform.translation.y -= model.fall_s * time.delta_secs();
 
         if transform.translation.y < -8.0 {
             commands.entity(entity).despawn_recursive();

@@ -3,15 +3,15 @@ use iyes_progress::prelude::*;
 
 use log::info;
 
-use crate::resources;
+use crate::{resources::{self, falling_xo::{ArcadeFont, OGltf, XGltf}}, states::game_state::GameState};
 
 pub fn load_game_assets(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     // we need to add our handles here, to track their loading progress:
-    mut loading: ResMut<AssetsLoading>,
+    mut loading: ResMut<AssetsLoading<GameState>>,
 ) {
-    info!("Loading game assets");
+    info!("Loading game assets...");
 
     let font: Handle<Font> = asset_server.load("ARCADE.TTF");
     let o_model: Handle<Scene> = asset_server.load("o.gltf#Scene0");
@@ -20,26 +20,30 @@ pub fn load_game_assets(
     loading.add(&font);
     loading.add(&o_model);
     loading.add(&x_model);
+
+    commands.insert_resource(ArcadeFont(font));
+    commands.insert_resource(OGltf(o_model));
+    commands.insert_resource(XGltf(x_model));
+
 }
 
 pub fn setup_splash_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Camera
-    let camera = commands.spawn(Camera2dBundle::default()).id();
+    let camera = commands.spawn(Camera2d).id();
 
     // root node
-    let background = commands.spawn(ImageBundle {
-        style: Style {
-            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-            ..default()
-        },
-        image: asset_server.load("splash.png").into(),
-        ..default()
-    }).id();
+    let background = commands
+        .spawn((
+            ImageNode::new(asset_server.load("splash.png")),
+            Node {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                ..default()
+            },
+        ))
+        .id();
 
-    commands.insert_resource(resources::splash::SplashScreen {
-        camera,
-        background,
-    })
+    commands.insert_resource(resources::splash::SplashScreen { camera, background })
 }
 
 pub fn teardown_splash_ui(mut commands: Commands, splash: Res<resources::splash::SplashScreen>) {

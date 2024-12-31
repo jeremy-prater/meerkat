@@ -11,6 +11,8 @@ pub struct OModel {
 
 #[derive(Component)]
 pub struct Light;
+#[derive(Component)]
+pub struct Scene;
 
 #[derive(Component)]
 pub struct ExitButton;
